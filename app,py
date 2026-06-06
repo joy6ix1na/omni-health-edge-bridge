@@ -1,0 +1,46 @@
+import os
+import json
+
+class OmniHealthEdgeBridge:
+    def __init__(self, organization_id: str):
+        self.org_id = organization_id
+        print(f"[Initialization] Omni Health Edge Bridge active for Org: {self.org_id}")
+
+    def pre_process_biomedical_signal(self, raw_signal_data: dict) -> dict:
+        """
+        Heuristic compression for mixed embedded text and biomedical signal streams.
+        Reduces token footprint before cloud transmission.
+        """
+        # Step 1: Filter noise from raw hardware telemetry (ECG/PPG sensor logs)
+        filtered_data = {k: v for k, v in raw_signal_data.items() if v is not None}
+        
+        # Step 2: Token-trimming heuristics (Truncate floats, remove redundant syntax)
+        compressed_stream = {}
+        for key, value in filtered_data.items():
+            if isinstance(value, float):
+                compressed_stream[key] = round(value, 2)  # Save valuable token spaces
+            else:
+                compressed_stream[key] = value
+                
+        print("[Edge Optimization] Successfully trimmed biomedical telemetry stream.")
+        return compressed_stream
+
+    def generate_optimized_prompt(self, processed_data: dict) -> str:
+        """
+        Wraps telemetry inside an infrastructure-cost-optimized system prompt template.
+        """
+        system_prompt = (
+            "Analyze the following low-overhead biomedical telemetry stream for anomalies. "
+            "Respond ONLY with critical metrics to minimize API token production costs.\n"
+        )
+        data_payload = json.dumps(processed_data, separators=(',', ':')) # Minify JSON spaces
+        return f"{system_prompt}Payload:{data_payload}"
+
+# Example instantiation for simulation
+if __name__ == "__main__":
+    bridge = OmniHealthEdgeBridge(organization_id="org-mock-id")
+    sample_telemetry = {"heart_rate": 72.456, "spo2": 98.0, "status": "Normal", "error_code": None}
+    
+    optimized_data = bridge.pre_process_biomedical_signal(sample_telemetry)
+    final_prompt = bridge.generate_optimized_prompt(optimized_data)
+    print(f"\n[Final Prompt Sent to OpenAI]:\n{final_prompt}")
