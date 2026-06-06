@@ -1,0 +1,19 @@
+{
+  "device_metadata": {
+    "device_id": "JODH-OMNI-EDGE-01",
+    "firmware_version": "v1.0.4",
+    "architecture": "Cortex-M4"
+  },
+  "biomedical_signals": {
+    "heart_rate_bpm": 75.2,
+    "spo2_percentage": 98.5,
+    "systolic_bp_mmHg": 120.0,
+    "diastolic_bp_mmHg": 80.0,
+    "signal_quality_index": 0.95
+  },
+  "system_status": {
+    "on_device_ai_filtered": true,
+    "token_optimization_applied": true,
+    "timestamp_epoch": 1780757745
+  }
+}
